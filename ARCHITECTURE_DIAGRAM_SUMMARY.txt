@@ -1,0 +1,76 @@
+USM CAFE - ARCHITECTURE DIAGRAM INPUT
+=====================================
+
+PLAIN LANGUAGE DESCRIPTION:
+----------------------------
+MyUSM Eats is a campus food ordering and delivery system for Universiti Sains Malaysia. It's a React-based web application with four user roles: Students (customers), Vendors (stall owners), Delivery Personnel, and Administrators. Students browse food stalls, add items to cart, checkout, and track orders. Vendors manage stalls, menus, and process orders. Delivery personnel receive assignments and update delivery status. Admins approve stalls, manage users, and generate reports. The system uses Supabase (PostgreSQL) as the backend with real-time updates, PostGIS for location tracking, and automated delivery assignment.
+
+TECH STACK:
+-----------
+Frontend: React 18 + TypeScript + Vite + Tailwind CSS
+Backend: Supabase (PostgreSQL + Auth + Realtime + Storage)
+State: React Context API
+Routing: React Router DOM
+Maps: React Leaflet + PostGIS
+Charts: Recharts
+Icons: Lucide React
+
+DATABASE SCHEMA:
+----------------
+Core Tables:
+- profiles (user info, roles: student/vendor/delivery/admin, credit_balance, is_active)
+- cafes (cafeteria locations, vendor_id, location, operating_hours)
+- stall (food stalls within cafes, status: pending/approved/rejected, categories)
+- menu_items (food items, price, category, prep_time, is_available)
+- orders (order_number, status, delivery_type, payment_status, totals)
+- order_items (quantity, price, special_instructions)
+- deliveries (rider_id, status, current_location PostGIS, status_history)
+- reviews (rating, food_rating, service_rating, vendor_response)
+- promo_codes (discount_type, discount_value, usage limits)
+
+Key Functions:
+- generate_order_number() - Creates unique order IDs
+- auto_assign_delivery() - Auto-assigns to nearest rider
+- find_nearest_rider() - PostGIS distance calculation
+- update_delivery_location() - Updates rider GPS coordinates
+
+Security: Row Level Security (RLS) on all tables with role-based policies
+
+ARCHITECTURE:
+-------------
+Client: React SPA (Static files) → CDN/Hosting (Vercel/Netlify)
+Backend: Supabase Cloud
+  ├── Authentication Service (JWT tokens)
+  ├── PostgreSQL Database (RLS enabled)
+  ├── Realtime Service (WebSocket subscriptions)
+  └── Storage Service (Image uploads)
+
+Data Flow:
+Student → React Frontend → Supabase API → PostgreSQL → Realtime Updates → All Dashboards
+
+Key Features:
+- Role-based routing and access control
+- Real-time order status updates via WebSocket
+- Automated delivery assignment using PostGIS
+- Credit-based payment system
+- Stall approval workflow
+- Location tracking for deliveries
+
+COMPONENT STRUCTURE:
+--------------------
+src/
+├── App.tsx (Role-based routing)
+├── contexts/AuthContext.tsx (Global auth state)
+├── components/
+│   ├── Student/ (Dashboard, MenuList, Cart, Checkout)
+│   ├── Vendor/ (Dashboard, RegisterStall, ManageMenu, AllOrders)
+│   ├── Delivery/ (Dashboard, DeliveryMap)
+│   ├── Admin/ (Dashboard, UserManagement, StallApplications, Reports)
+│   └── Auth/ (LoginForm, RegisterForm, UpdatePassword)
+
+DEPLOYMENT:
+-----------
+Frontend: Static build (npm run build) → Deploy to Vercel/Netlify
+Backend: Supabase Cloud (managed PostgreSQL + services)
+Environment: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+

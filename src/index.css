@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base dark-mode foundations */
+@layer base {
+  html, body, #root {
+    @apply h-full;
+  }
+  
+  html {
+    overflow-x: hidden;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900 transition-colors duration-200;
+    overflow-x: hidden;
+    width: 100%;
+  }
+  .dark body {
+    @apply bg-gray-950 text-gray-100;
+  }
+  
+  /* Ensure charts render properly */
+  .recharts-wrapper {
+    max-width: 100% !important;
+  }
+  
+  .recharts-surface {
+    overflow: visible !important;
+  }
+  
+  /* Chart tooltip colors */
+  :root {
+    --tooltip-bg: #ffffff;
+    --tooltip-border: #e5e7eb;
+    --tooltip-text: #111827;
+  }
+  .dark {
+    --tooltip-bg: #1f2937;
+    --tooltip-border: #374151;
+    --tooltip-text: #f9fafb;
+  }
+
+  /* Base for form controls */
+  input, select, textarea {
+    @apply bg-white text-gray-900 border border-gray-300;
+  }
+  .dark input, .dark select, .dark textarea {
+    @apply bg-gray-800 text-gray-100 border-gray-700 placeholder-gray-400;
+  }
+  
+  /* Global text defaults - ensure most text has proper contrast */
+  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+    @apply text-white;
+  }
+  
+  .dark p, .dark span, .dark div, .dark label, .dark li {
+    color: inherit;
+  }
+
+  /* Tables */
+  table { @apply text-sm; }
+  thead { @apply bg-gray-50 text-gray-600; }
+  .dark thead { @apply bg-gray-800 text-gray-300; }
+  tbody tr { @apply border-b border-gray-100; }
+  .dark tbody tr { @apply border-gray-800; }
+  
+  /* Table containers - ensure mobile scrolling */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Accessibility: Focus visible styles */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    @apply outline-2 outline-offset-2 outline-blue-600;
+  }
+  .dark button:focus-visible,
+  .dark a:focus-visible,
+  .dark input:focus-visible,
+  .dark select:focus-visible,
+  .dark textarea:focus-visible {
+    @apply outline-blue-400;
+  }
+}
+
+/* Reusable surface and components */
+@layer components {
+  .surface {
+    @apply bg-white dark:bg-gray-900/60 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm transition-colors duration-200;
+  }
+  .card {
+    @apply surface p-4 sm:p-6;
+  }
+  .pill-tab {
+    @apply px-2 sm:px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 transition-colors;
+  }
+  .nav-tab {
+    @apply flex items-center gap-1 sm:gap-2 px-3 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800 transition-colors;
+  }
+  .nav-tab--active {
+    @apply text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-950/40;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-3 sm:px-3.5 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-200/60 dark:focus:ring-blue-900/40 transition-colors;
+  }
+}
+
+/* ========= Existing animations ========= */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scalePulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Shimmer for active progress connector */
+@keyframes progressShimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.progress-shimmer {
+  background: linear-gradient(90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: progressShimmer 1.5s linear infinite;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.animate-fadeSlideIn { animation: fadeSlideIn 0.3s ease-out; }
+.animate-scalePulse  { animation: scalePulse 0.2s ease-in-out; }
+.animate-fadeIn      { animation: fadeIn 0.2s ease-out; }
+
+/* ========= Toast-specific animation ========= */
+@keyframes toast-enter {
+  0%   { opacity: 0; transform: translateY(-10px) translateX(10px) scale(0.98); }
+  60%  { opacity: 1; transform: translateY(0) translateX(0) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) translateX(0) scale(1); }
+}
+.animate-toast-enter { animation: toast-enter 240ms ease-out both; }
+
+/* Ensure toast progress bar positions relative to the card */
+.toast-card { position: relative; }
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-toast-enter,
+  .animate-fadeSlideIn,
+  .animate-scalePulse,
+  .animate-fadeIn {
+    animation: none !important;
+  }
+}
+
+/* Optional: slim scrollbar for stacked toasts */
+/* Optional: slim scrollbar for stacked toasts (WebKit-based browsers) */
+.toast-scroll::-webkit-scrollbar { width: 6px; }
+.toast-scroll::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.35);
+  border-radius: 9999px;
+}
